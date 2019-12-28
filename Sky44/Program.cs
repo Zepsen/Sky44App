@@ -11,10 +11,10 @@ namespace Sky44
             Console.WriteLine("Hello World!");
             var resolver = new Resolve();
             resolver.Run(new int[] {
-                    0, 0, 3,
                     0, 0, 0,
                     0, 0, 0,
-                    0, 0, 0
+                    0, 0, 0,
+                    3, 0, 0
                 });
         }
     }
@@ -55,9 +55,7 @@ namespace Sky44
                 var idx = _clues.IndexOf(_size, 0);
                 while (idx != -1)
                 {
-                    (int x, int y) = GetCoords(idx);
-                    DoForSize(x, y, idx);
-
+                    DoForSize(idx);
                     idx = _clues.IndexOf(_size, idx + 1);
                 }
             }
@@ -75,11 +73,48 @@ namespace Sky44
             }
         }
 
-        private void DoForSize(int x, int y, int idx)
+        private void DoForSize(int idx)
         {
-            Console.WriteLine($"{_size} - x{x} y{y}");
+            Console.WriteLine($"{_size} - x y");
+            if (idx < _size)
+            {
+                for (int i = 0, n = 1; i < _size; i++, n++)
+                {
+                    _arr[i][idx] = n.ToString();
+                    DeleteInLineAndRow(i, idx, n);
+                }
+            }
 
-            
+            else if (idx >= _size && idx < _size * 2)
+            {
+                var j = idx % _size;
+                for (int i = _size - 1, n = 1; i >= 0; i--, n++)
+                {
+                    _arr[j][i] = n.ToString();
+                    DeleteInLineAndRow(j, i, n);
+                }
+            }
+
+            else if (idx >= _size * 2 && idx < _size * 3)
+            {
+                var j = _size - 1 - idx % _size;
+                for (int i = _size - 1, n = 1; i >= 0; i--, n++)
+                {
+                    _arr[i][j] = n.ToString();
+                    DeleteInLineAndRow(i, j, n);
+                }
+            }
+
+            else
+            {
+                var j = idx % _size;
+                for (int i = 0, n = 1; i < _size; i++, n++)
+                {
+                    _arr[j][i] = n.ToString();
+                    DeleteInLineAndRow(j, i, n);
+                }
+            }
+
         }
 
         private void DoFor1(int x, int y)
@@ -97,7 +132,7 @@ namespace Sky44
                 if (_arr[x][i].Length > 1)
                 {
                     _arr[x][i] = _arr[x][i].Replace(n.ToString(), "");
-                    
+
                     if (_arr[x][i].Length == 1)
                     {
                         DeleteInLineAndRow(x, i, Convert.ToInt32(_arr[x][i]));
@@ -108,7 +143,7 @@ namespace Sky44
                 {
                     _arr[i][y] = _arr[i][y].Replace(n.ToString(), "");
 
-                    if(_arr[i][y].Length == 1)
+                    if (_arr[i][y].Length == 1)
                     {
                         DeleteInLineAndRow(i, y, Convert.ToInt32(_arr[i][y]));
                     }
