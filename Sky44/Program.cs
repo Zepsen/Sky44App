@@ -11,10 +11,10 @@ namespace Sky44
             Console.WriteLine("Hello World!");
             var resolver = new Resolve();
             resolver.Run(new int[] {
+                    0, 1, 3,
                     0, 0, 0,
                     0, 0, 0,
-                    0, 0, 0,
-                    3, 0, 0
+                    0, 0, 0
                 });
         }
     }
@@ -32,7 +32,6 @@ namespace Sky44
             _arr = Generate();
 
             Console.WriteLine("Size is " + _size);
-            //_arr[2][0] = "13";
             Proceed();
 
             for (int i = 0; i < _size; i++)
@@ -67,7 +66,6 @@ namespace Sky44
                 {
                     (int x, int y) = GetCoords(idx);
                     DoFor1(x, y);
-
                     idx = _clues.IndexOf(1, idx + 1);
                 }
             }
