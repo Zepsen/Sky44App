@@ -12,10 +12,10 @@ namespace Sky44
             var resolver = new Resolve();
             resolver.Run(
                 new int[] {
-                    0, 0, 0,
-                    0, 0, 0,
-                    0, 0, 0,
-                    0, 0, 2
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 3, 0, 0
                 });
         }
     }
@@ -96,6 +96,8 @@ namespace Sky44
                     Remove(x, y, _size - i - j);
                 }
             }
+
+            //DoForN(x-1, y-1, n-1);
         }
 
         private void DoForSize(int idx)
@@ -105,7 +107,7 @@ namespace Sky44
             {
                 for (int i = 0, n = 1; i < _size; i++, n++)
                 {
-                    _arr[i][idx] = n.ToString();
+                    Set(i, idx, n);
                     DeleteInLineAndRow(i, idx, n);
                 }
             }
@@ -115,7 +117,7 @@ namespace Sky44
                 var j = idx % _size;
                 for (int i = _size - 1, n = 1; i >= 0; i--, n++)
                 {
-                    _arr[j][i] = n.ToString();
+                    Set(j, i, n);
                     DeleteInLineAndRow(j, i, n);
                 }
             }
@@ -125,7 +127,7 @@ namespace Sky44
                 var j = _size - 1 - idx % _size;
                 for (int i = _size - 1, n = 1; i >= 0; i--, n++)
                 {
-                    _arr[i][j] = n.ToString();
+                    Set(i, j, n);
                     DeleteInLineAndRow(i, j, n);
                 }
             }
@@ -135,7 +137,7 @@ namespace Sky44
                 var j = _size - 1 - idx % _size;
                 for (int i = 0, n = 1; i < _size; i++, n++)
                 {
-                    _arr[j][i] = n.ToString();
+                    Set(j, i, n);
                     DeleteInLineAndRow(j, i, n);
                 }
             }
@@ -147,7 +149,7 @@ namespace Sky44
             (int x, int y) = GetCoords(idx);
             Console.WriteLine($"1 - x{x} y{y}");
 
-            _arr[x][y] = _size.ToString();
+            Set(x, y, _size);
             DeleteInLineAndRow(x, y, _size);
         }
 
@@ -170,6 +172,14 @@ namespace Sky44
                 {
                     DeleteInLineAndRow(x, y, Convert.ToInt32(_arr[x][y]));
                 }
+            }
+        }
+
+        private void Set(int x, int y, int n)
+        {
+            if (_arr[x][y].Length > 1)
+            {
+                _arr[x][y] = n.ToString();
             }
         }
 
