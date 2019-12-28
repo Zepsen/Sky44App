@@ -12,10 +12,10 @@ namespace Sky44
             var resolver = new Resolve();
             resolver.Run(
                 new int[] {
-                    0, 0, 1, 2,
-                    0, 2, 0, 0,
-                    0, 3, 0, 0,
-                    0, 1, 0, 0
+                    0, 0, 0, 0,
+                    0, 0, 4, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0
                 });
         }
     }
@@ -39,7 +39,7 @@ namespace Sky44
             {
                 for (int j = 0; j < _size; j++)
                 {
-                    Console.Write($" {_arr[i][j]}");
+                    Console.Write($" {_arr[i][j]}" + new string(' ', _size - _arr[i][j].Length));
                 }
 
                 Console.WriteLine();
@@ -87,7 +87,7 @@ namespace Sky44
 
         private void DoForN(int idx, int n)
         {
-            Console.WriteLine($"Idx {idx}, {n}");
+            Console.WriteLine($"idx {idx},  n {n}");
             (int x, int y) = GetCoords(idx);
             for (int i = 0; i < n-1; i++)
             {
@@ -102,7 +102,7 @@ namespace Sky44
 
         private void DoForSize(int idx)
         {
-            Console.WriteLine($"{_size} - x y");
+            Console.WriteLine($"{_size} - idx{idx}");
             if (idx < _size)
             {
                 for (int i = 0, n = 1; i < _size; i++, n++)
@@ -195,20 +195,20 @@ namespace Sky44
 
             else if (idx >= _size && idx < _size * 2)
             {
-                x = _size - 1;
-                y = idx % _size;
+                y = _size - 1;
+                x = idx % _size;
             }
 
             else if (idx >= _size * 2 && idx < _size * 3)
             {
-                x = _size - 1 - idx % _size;
-                y = _size - 1;
+                y = _size - 1 - idx % _size;
+                x = _size - 1;
             }
 
             else
             {
-                x = 0;
-                y = _size - 1 - idx % _size;
+                x = _size - 1 - idx % _size;
+                y = 0;
             }
 
             return (x, y);
