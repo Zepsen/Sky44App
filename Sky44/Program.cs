@@ -10,11 +10,12 @@ namespace Sky44
         {
             Console.WriteLine("Hello World!");
             var resolver = new Resolve();
-            resolver.Run(new int[] {
-                    0, 1, 3,
+            resolver.Run(
+                new int[] {
                     0, 0, 0,
                     0, 0, 0,
-                    0, 0, 0
+                    0, 0, 0,
+                    0, 0, 2
                 });
         }
     }
@@ -43,12 +44,11 @@ namespace Sky44
 
                 Console.WriteLine();
             }
-
-
         }
 
         private void Proceed()
         {
+            //for last
             if (_clues.Any(i => i == _size))
             {
                 var idx = _clues.IndexOf(_size, 0);
@@ -59,14 +59,41 @@ namespace Sky44
                 }
             }
 
+            // for first
             if (_clues.Any(i => i == 1))
             {
                 var idx = _clues.IndexOf(1, 0);
                 while (idx != -1)
                 {
-                    (int x, int y) = GetCoords(idx);
-                    DoFor1(x, y);
+                    DoFor1(idx);
                     idx = _clues.IndexOf(1, idx + 1);
+                }
+            }
+
+            // From snd to last
+            for (int n = 2; n < _size; n++)
+            {
+                if (_clues.Any(i => i == n))
+                {
+                    var idx = _clues.IndexOf(n, 0);
+                    while (idx != -1)
+                    {
+                        DoForN(idx, n);
+                        idx = _clues.IndexOf(n, idx + 1);
+                    }
+                }
+            }
+        }
+
+        private void DoForN(int idx, int n)
+        {
+            Console.WriteLine($"Idx {idx}, {n}");
+            (int x, int y) = GetCoords(idx);
+            for (int i = 0; i < n-1; i++)
+            {
+                for (int j = 0; j < _size - n; j++)
+                {
+                    Remove(x, y, _size - i - j);
                 }
             }
         }
@@ -105,7 +132,7 @@ namespace Sky44
 
             else
             {
-                var j = idx % _size;
+                var j = _size - 1 - idx % _size;
                 for (int i = 0, n = 1; i < _size; i++, n++)
                 {
                     _arr[j][i] = n.ToString();
@@ -115,8 +142,9 @@ namespace Sky44
 
         }
 
-        private void DoFor1(int x, int y)
+        private void DoFor1(int idx)
         {
+            (int x, int y) = GetCoords(idx);
             Console.WriteLine($"1 - x{x} y{y}");
 
             _arr[x][y] = _size.ToString();
@@ -127,24 +155,20 @@ namespace Sky44
         {
             for (int i = 0; i < _size; i++)
             {
-                if (_arr[x][i].Length > 1)
+                Remove(x, i, n);
+                Remove(i, y, n);
+            }
+        }
+
+        private void Remove(int x, int y, int n)
+        {
+            if (_arr[x][y].Length > 1)
+            {
+                _arr[x][y] = _arr[x][y].Replace(n.ToString(), "");
+
+                if (_arr[x][y].Length == 1)
                 {
-                    _arr[x][i] = _arr[x][i].Replace(n.ToString(), "");
-
-                    if (_arr[x][i].Length == 1)
-                    {
-                        DeleteInLineAndRow(x, i, Convert.ToInt32(_arr[x][i]));
-                    }
-                }
-
-                if (_arr[i][y].Length > 1)
-                {
-                    _arr[i][y] = _arr[i][y].Replace(n.ToString(), "");
-
-                    if (_arr[i][y].Length == 1)
-                    {
-                        DeleteInLineAndRow(i, y, Convert.ToInt32(_arr[i][y]));
-                    }
+                    DeleteInLineAndRow(x, y, Convert.ToInt32(_arr[x][y]));
                 }
             }
         }
@@ -155,8 +179,8 @@ namespace Sky44
 
             if (idx < _size)
             {
-                x = idx % _size;
-                y = 0;
+                y = idx % _size;
+                x = 0;
             }
 
             else if (idx >= _size && idx < _size * 2)
