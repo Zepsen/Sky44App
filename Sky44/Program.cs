@@ -12,10 +12,10 @@ namespace Sky44
             var resolver = new Resolve();
             resolver.Run(
                 new int[] {
-                    0, 0, 0, 0,
-                    0, 0, 4, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0
+                   0, 0, 1, 2,
+                   0, 2, 0, 0,
+                   0, 3, 0, 0,
+                   0, 1, 0, 0
                 });
         }
     }
@@ -89,12 +89,12 @@ namespace Sky44
         {
             Console.WriteLine($"idx {idx},  n {n}");
             (int x, int y) = GetCoords(idx);
-            for (int i = 0; i < n-1; i++)
+            for (int i = 0; i < n - 1; i++)
             {
-                for (int j = 0; j < _size - n; j++)
-                {
-                    Remove(x, y, _size - i - j);
-                }
+                Remove(x, y, _size - i);
+                //for (int j = 0; j < _size - n; j++)
+                //{
+                //}
             }
 
             //DoForN(x-1, y-1, n-1);
