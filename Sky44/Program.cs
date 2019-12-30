@@ -9,6 +9,7 @@ namespace Sky44
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+
             var resolver = new Resolve();
             resolver.Run(
                 new int[] {
@@ -17,10 +18,15 @@ namespace Sky44
                    //0, 0, 0, 0,
                    //0, 0, 0, 0
 
-                   0, 0, 1, 2,
-                   0, 2, 0, 0,
-                   0, 3, 0, 0,
-                   0, 1, 0, 0
+                   //0, 0, 1, 2,
+                   //0, 2, 0, 0,
+                   //0, 3, 0, 0,
+                   //0, 1, 0, 0
+
+                   2, 2, 1, 3,
+                   2, 2, 3, 1,
+                   1, 2, 2, 3,
+                   3, 2, 1, 3
                 });
         }
     }
@@ -39,7 +45,11 @@ namespace Sky44
 
             Console.WriteLine("Size is " + _size);
             Proceed();
+            Display();
+        }
 
+        private void Display()
+        {
             for (int i = 0; i < _size; i++)
             {
                 for (int j = 0; j < _size; j++)
@@ -49,6 +59,8 @@ namespace Sky44
 
                 Console.WriteLine();
             }
+
+            Console.WriteLine(new string('-', 50));
         }
 
         private void Proceed()
@@ -63,6 +75,7 @@ namespace Sky44
                     idx = _clues.IndexOf(_size, idx + 1);
                 }
             }
+            Display();
 
             // for first
             if (_clues.Any(i => i == 1))
@@ -74,6 +87,7 @@ namespace Sky44
                     idx = _clues.IndexOf(1, idx + 1);
                 }
             }
+            Display();
 
             // From snd to last
             for (int n = 2; n < _size; n++)
@@ -87,7 +101,74 @@ namespace Sky44
                         idx = _clues.IndexOf(n, idx + 1);
                     }
                 }
+
+                Display();
             }
+
+            DoForLefted();
+        }
+
+        // todo: optimize this
+        private void DoForLefted()
+        {
+            List<char> res = new List<char>(4);
+
+            for (int i = 0; i < _size; i++)
+            {
+                for (int j = 0; j < _size; j++)
+                {
+                    //row
+                    var temp = _arr[i][j];
+                    res = temp.ToList();
+                    for (int k = 0; k < _size; k++)
+                    {
+                        if (j == k) continue;
+                        if (_arr[i][k].Length == 1) continue;
+
+                        res = res.Except(_arr[i][k]).ToList();
+                        if (!res.Any()) break;
+                    }
+
+                    if(res.Any() && new string(res.ToArray()) != temp)
+                    {
+                        foreach (var item in res)
+                        {
+                            SetAndDelete(i, j, item - '0');
+                        }
+                    }
+
+
+                    //cols
+                    temp = _arr[j][i];
+                    res = temp.ToList();
+                    for (int k = 0; k < _size; k++)
+                    {
+                        if (j == k) continue;
+                        if (_arr[k][i].Length == 1) continue;
+
+                        res = res.Except(_arr[k][i]).ToList();
+                        
+                        if (!res.Any()) break;
+                    }
+
+
+                    if (res.Any() && new string(res.ToArray()) != temp)
+                    {
+                        foreach (var item in res)
+                        {
+                            SetAndDelete(j, i, item - '0');
+                        }
+                    }
+
+                }
+
+            } 
+        }
+
+        private void SetAndDelete(int i, int j, int item)
+        {
+            Set(i, j, item);
+            DeleteInLineAndRow(i, j, item);
         }
 
         private void DoForN(int idx, int n)
@@ -126,8 +207,7 @@ namespace Sky44
             {
                 for (int i = 0, n = 1; i < _size; i++, n++)
                 {
-                    Set(i, idx, n);
-                    DeleteInLineAndRow(i, idx, n);
+                    SetAndDelete(i, idx, n);
                 }
             }
 
@@ -136,8 +216,7 @@ namespace Sky44
                 var j = idx % _size;
                 for (int i = _size - 1, n = 1; i >= 0; i--, n++)
                 {
-                    Set(j, i, n);
-                    DeleteInLineAndRow(j, i, n);
+                    SetAndDelete(j, i, n);
                 }
             }
 
@@ -146,8 +225,7 @@ namespace Sky44
                 var j = _size - 1 - idx % _size;
                 for (int i = _size - 1, n = 1; i >= 0; i--, n++)
                 {
-                    Set(i, j, n);
-                    DeleteInLineAndRow(i, j, n);
+                    SetAndDelete(i, j, n);
                 }
             }
 
@@ -155,9 +233,8 @@ namespace Sky44
             {
                 var j = _size - 1 - idx % _size;
                 for (int i = 0, n = 1; i < _size; i++, n++)
-                {
-                    Set(j, i, n);
-                    DeleteInLineAndRow(j, i, n);
+                {                   
+                    SetAndDelete(i, j, n);
                 }
             }
 
@@ -168,8 +245,7 @@ namespace Sky44
             (int x, int y) = GetCoords(idx);
             Console.WriteLine($"1 - x{x} y{y}");
 
-            Set(x, y, _size);
-            DeleteInLineAndRow(x, y, _size);
+            SetAndDelete(x, y, _size);
         }
 
         private void DeleteInLineAndRow(int x, int y, int n)
@@ -180,6 +256,23 @@ namespace Sky44
                 Remove(i, y, n);
             }
         }
+
+        //private void DeleteInRow(int x, int y, int n)
+        //{
+        //    for (int i = 0; i < _size; i++)
+        //    {
+        //        Remove(x, i, n);                
+        //    }
+        //}
+
+        //private void DeleteInLine(int x, int y, int n)
+        //{
+        //    for (int i = 0; i < _size; i++)
+        //    {
+        //        Remove(i, y, n);
+        //    }
+        //}
+
 
         private void Remove(int x, int y, int n)
         {
