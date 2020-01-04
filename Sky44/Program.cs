@@ -90,6 +90,17 @@ namespace Sky44
             Display();
 
             // From snd to last
+            LoopForN(DoForN);
+
+            // Check if line contains lefted items
+            DoForLefted();
+
+            //final check
+            LoopForN(DoFullCheck);
+        }
+
+        private void LoopForN(Action<int, int> func)
+        {
             for (int n = 2; n < _size; n++)
             {
                 if (_clues.Any(i => i == n))
@@ -97,15 +108,19 @@ namespace Sky44
                     var idx = _clues.IndexOf(n, 0);
                     while (idx != -1)
                     {
-                        DoForN(idx, n);
+                        func(idx, n);
                         idx = _clues.IndexOf(n, idx + 1);
                     }
                 }
-
+                
                 Display();
             }
+        } 
+        
+        private void DoFullCheck(int idx, int n)
+        {
+            (int x, int y) = GetCoords(idx);
 
-            DoForLefted();
         }
 
         // todo: optimize this
