@@ -13,7 +13,7 @@ namespace Sky44
         Bottom = 8,
 
     }
-    
+
     class Program
     {
         static void Main(string[] args)
@@ -28,15 +28,15 @@ namespace Sky44
                    //0, 0, 0, 0,
                    //0, 0, 0, 0
 
-                   //0, 0, 1, 2,
-                   //0, 2, 0, 0,
-                   //0, 3, 0, 0,
-                   //0, 1, 0, 0
+                   0, 0, 1, 2,
+                   0, 2, 0, 0,
+                   0, 3, 0, 0,
+                   0, 1, 0, 0
 
-                   2, 2, 1, 3,
-                   2, 2, 3, 1,
-                   1, 2, 2, 3,
-                   3, 2, 1, 3
+                   //2, 2, 1, 3,
+                   //2, 2, 3, 1,
+                   //1, 2, 2, 3,
+                   //3, 2, 1, 3
                 });
         }
     }
@@ -107,8 +107,12 @@ namespace Sky44
             // Check if line contains lefted items
             DoForLefted();
 
+            Display();
+
             //final check
             LoopForN(DoFullCheck);
+
+            Display();
         }
 
         private void LoopForN(Action<int, int> func)
@@ -124,64 +128,73 @@ namespace Sky44
                         idx = _clues.IndexOf(n, idx + 1);
                     }
                 }
-                
+
                 Display();
             }
-        } 
-        
+        }
+
         private void DoFullCheck(int idx, int n)
         {
             (int x, int y) = GetCoords(idx);
-            var must = Enumerable.Range(_size - (n-2), n - 1);
-            
+            var must = Enumerable.Range(_size - (n - 2), n - 1);
+            var mustRes = string.Join("", must);
+            var availabel = _size - n;
             var vector = GetVector(idx);
-            for (int i = n; i < _size; i++)
+            var val = _size - (n - 1);
+
+            for (int i = availabel; i < _size; i++)
             {
                 switch (vector)
                 {
                     case Vector.Left:
                         foreach (var item in must)
                         {
-                            if(_arr[x][i] == item.ToString())
+                            if (_arr[x][i] == item.ToString())
                             {
-                                SetAndDelete(x, i, item);
+                                mustRes = mustRes.Replace(item.ToString(), "");
                             }
                         }
 
-                       break;
+                        break;
                     case Vector.Right:
                         foreach (var item in must)
                         {
-                            if(_arr[_max][_max - i] == item.ToString())
+                            if (_arr[_max][_max - i] == item.ToString())
                             {
-                                SetAndDelete(_max, _max - i, item);
+                                mustRes = mustRes.Replace(item.ToString(), "");
                             }
                         }
                         break;
                     case Vector.Top:
                         foreach (var item in must)
                         {
-                            if(_arr[i][y] == item.ToString())
+                            if (_arr[i][y] == item.ToString())
                             {
-                                SetAndDelete(i, y, item);
+                                mustRes = mustRes.Replace(item.ToString(), "");
                             }
                         }
                         break;
                     case Vector.Bottom:
                         foreach (var item in must)
                         {
-                            if(_arr[_max - i][_max] == item.ToString())
+                            if (_arr[_max - i][_max] == item.ToString())
                             {
-                                SetAndDelete(_max - i, _max, item);
+                                mustRes = mustRes.Replace(item.ToString(), "");
                             }
                         }
                         break;
                     default:
                         break;
                 }
-            }  
+
+            }
+
+            if (string.IsNullOrEmpty(mustRes))
+            {
+                SetAndDelete(x, y, val);               
+            }
         }
-       
+
         private Vector GetVector(int idx)
         {
             if (idx < _size)
@@ -215,7 +228,7 @@ namespace Sky44
                         if (!res.Any()) break;
                     }
 
-                    if(res.Any() && new string(res.ToArray()) != temp)
+                    if (res.Any() && new string(res.ToArray()) != temp)
                     {
                         foreach (var item in res)
                         {
@@ -233,7 +246,7 @@ namespace Sky44
                         if (_arr[k][i].Length == 1) continue;
 
                         res = res.Except(_arr[k][i]).ToList();
-                        
+
                         if (!res.Any()) break;
                     }
 
@@ -248,7 +261,7 @@ namespace Sky44
 
                 }
 
-            } 
+            }
         }
 
         private void SetAndDelete(int i, int j, int item)
@@ -319,7 +332,7 @@ namespace Sky44
             {
                 var j = _size - 1 - idx % _size;
                 for (int i = 0, n = 1; i < _size; i++, n++)
-                {                   
+                {
                     SetAndDelete(i, j, n);
                 }
             }
