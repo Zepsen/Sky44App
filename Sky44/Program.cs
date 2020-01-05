@@ -4,6 +4,16 @@ using System.Linq;
 
 namespace Sky44
 {
+    [Flags]
+    public enum Vector
+    {
+        Left = 1,
+        Right = 2,
+        Top = 4,
+        Bottom = 8,
+
+    }
+    
     class Program
     {
         static void Main(string[] args)
@@ -34,6 +44,7 @@ namespace Sky44
     public class Resolve
     {
         private int _size;
+        private int _max;
         private string[][] _arr;
         private List<int> _clues = new List<int>();
 
@@ -42,6 +53,7 @@ namespace Sky44
             _clues = clues.ToList();
             _size = clues.Length / 4;
             _arr = Generate();
+            _max = _size - 1;
 
             Console.WriteLine("Size is " + _size);
             Proceed();
@@ -120,7 +132,66 @@ namespace Sky44
         private void DoFullCheck(int idx, int n)
         {
             (int x, int y) = GetCoords(idx);
+            var must = Enumerable.Range(_size - (n-2), n - 1);
+            
+            var vector = GetVector(idx);
+            for (int i = n; i < _size; i++)
+            {
+                switch (vector)
+                {
+                    case Vector.Left:
+                        foreach (var item in must)
+                        {
+                            if(_arr[x][i] == item.ToString())
+                            {
+                                SetAndDelete(x, i, item);
+                            }
+                        }
 
+                       break;
+                    case Vector.Right:
+                        foreach (var item in must)
+                        {
+                            if(_arr[_max][_max - i] == item.ToString())
+                            {
+                                SetAndDelete(_max, _max - i, item);
+                            }
+                        }
+                        break;
+                    case Vector.Top:
+                        foreach (var item in must)
+                        {
+                            if(_arr[i][y] == item.ToString())
+                            {
+                                SetAndDelete(i, y, item);
+                            }
+                        }
+                        break;
+                    case Vector.Bottom:
+                        foreach (var item in must)
+                        {
+                            if(_arr[_max - i][_max] == item.ToString())
+                            {
+                                SetAndDelete(_max - i, _max, item);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }  
+        }
+       
+        private Vector GetVector(int idx)
+        {
+            if (idx < _size)
+                return Vector.Top;
+            else if (idx >= _size && idx < _size * 2)
+                return Vector.Right;
+            else if (idx >= _size * 2 && idx < _size * 3)
+                return Vector.Bottom;
+            else
+                return Vector.Left;
         }
 
         // todo: optimize this
