@@ -28,15 +28,15 @@ namespace Sky44
                    //0, 0, 0, 0,
                    //0, 0, 0, 0
 
-                   0, 0, 1, 2,
+                   /*0, 0, 1, 2,
                    0, 2, 0, 0,
                    0, 3, 0, 0,
                    0, 1, 0, 0
-
-                   //2, 2, 1, 3,
-                   //2, 2, 3, 1,
-                   //1, 2, 2, 3,
-                   //3, 2, 1, 3
+*/
+                   2, 2, 1, 3,
+                   2, 2, 3, 1,
+                   1, 2, 2, 3,
+                   3, 2, 1, 3
                 });
         }
     }
@@ -110,9 +110,15 @@ namespace Sky44
             Display();
 
             //final check
-            LoopForN(DoFullCheck);
+            /*LoopForN(DoFullCheck);
+            Display();*/
 
+            LoopForN(DoFullCheck2);
             Display();
+                        
+            //LoopForN(DoFullCheck);
+            //Display();
+
         }
 
         private void LoopForN(Action<int, int> func)
@@ -129,8 +135,63 @@ namespace Sky44
                     }
                 }
 
-                Display();
+                //Display();
             }
+        }
+
+        private void DoFullCheck2(int idx, int n)
+        {
+            (int x, int y) = GetCoords(idx);
+            var vector = GetVector(idx);
+            var val = _size - (n - 1);
+
+            switch (vector)
+            {
+                case Vector.Left:
+                    if (_arr[x][_max] == _size.ToString())
+                    {
+                        SetAndDelete(x, 0, val);
+                    }
+                    else if (_arr[x][_max - 1] == _size.ToString())
+                    {
+                        DoForSize(idx, 1);
+                    }
+                    break;
+                case Vector.Right:
+                    if (_arr[x][0] == _size.ToString())
+                    {
+                        SetAndDelete(x, _max, val);
+                    }
+                    else if (_arr[x][1] == _size.ToString())
+                    {
+                        DoForSize(idx, 1);
+                    }
+                    break;
+                case Vector.Top:
+                    if (_arr[_max][y] == _size.ToString())
+                    {
+                        SetAndDelete(0, y, val);
+                    }
+                    else if (_arr[_max - 1][y] == _size.ToString())
+                    {
+                        DoForSize(idx, 1);
+                    }
+                    break;
+                case Vector.Bottom:
+                    if (_arr[0][y] == _size.ToString())
+                    {
+                        SetAndDelete(_max, y, val);
+                    }
+                    else if (_arr[1][y] == _size.ToString())
+                    {
+                        DoForSize(idx, 1);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+
         }
 
         private void DoFullCheck(int idx, int n)
@@ -138,10 +199,11 @@ namespace Sky44
             (int x, int y) = GetCoords(idx);
             var must = Enumerable.Range(_size - (n - 2), n - 1);
             var mustRes = string.Join("", must);
+            //var mustRes = _size.ToString();
             var availabel = _size - n;
-            var vector = GetVector(idx);
-            var val = _size - (n - 1);
 
+            var vector = GetVector(idx);
+           
             for (int i = availabel; i < _size; i++)
             {
                 switch (vector)
@@ -149,6 +211,11 @@ namespace Sky44
                     case Vector.Left:
                         foreach (var item in must)
                         {
+                            if(_arr[x][_max] == _size.ToString())
+                            {
+                                mustRes = string.Empty;
+                            }
+
                             if (_arr[x][i] == item.ToString())
                             {
                                 mustRes = mustRes.Replace(item.ToString(), "");
@@ -159,6 +226,11 @@ namespace Sky44
                     case Vector.Right:
                         foreach (var item in must)
                         {
+                            if(_arr[x][0] == _size.ToString())
+                            {
+                                mustRes = string.Empty;
+                            }
+
                             if (_arr[_max][_max - i] == item.ToString())
                             {
                                 mustRes = mustRes.Replace(item.ToString(), "");
@@ -168,6 +240,11 @@ namespace Sky44
                     case Vector.Top:
                         foreach (var item in must)
                         {
+                            if(_arr[_max][y] == _size.ToString())
+                            {
+                                mustRes = string.Empty;
+                            }
+
                             if (_arr[i][y] == item.ToString())
                             {
                                 mustRes = mustRes.Replace(item.ToString(), "");
@@ -177,6 +254,11 @@ namespace Sky44
                     case Vector.Bottom:
                         foreach (var item in must)
                         {
+                            if(_arr[0][y] == _size.ToString())
+                            {
+                                mustRes = string.Empty;
+                            }
+
                             if (_arr[_max - i][_max] == item.ToString())
                             {
                                 mustRes = mustRes.Replace(item.ToString(), "");
@@ -191,7 +273,8 @@ namespace Sky44
 
             if (string.IsNullOrEmpty(mustRes))
             {
-                SetAndDelete(x, y, val);               
+                var newval = _arr[x][y].LastOrDefault() - '0';
+                SetAndDelete(x, y, newval);
             }
         }
 
@@ -299,44 +382,41 @@ namespace Sky44
                 y++;
         }
 
-        private void DoForSize(int idx)
+        private void DoForSize(int idx, int from = 0)
         {
             Console.WriteLine($"{_size} - idx{idx}");
-            if (idx < _size)
+            var vector = GetVector(idx);
+            int j = 0;
+            switch (vector)
             {
-                for (int i = 0, n = 1; i < _size; i++, n++)
-                {
-                    SetAndDelete(i, idx, n);
-                }
+                case Vector.Top:
+                    for (int i = 0, n = 1 + from; i < _size; i++, n++)
+                    {
+                        SetAndDelete(i, idx, n);
+                    }
+                    break;
+                case Vector.Right:
+                    j = idx % _size;
+                    for (int i = _max, n = 1 + from; i >= 0; i--, n++)
+                    {
+                        SetAndDelete(j, i, n);
+                    }
+                    break;
+                case Vector.Bottom:
+                    j = _max - idx % _size;
+                    for (int i = _max, n = 1 + from; i >= 0; i--, n++)
+                    {
+                        SetAndDelete(i, j, n);
+                    }
+                    break;
+                case Vector.Left:
+                    j = _max - idx % _size;
+                    for (int i = 0, n = 1 + from; i < _size; i++, n++)
+                    {
+                        SetAndDelete(i, j, n);
+                    }
+                    break;
             }
-
-            else if (idx >= _size && idx < _size * 2)
-            {
-                var j = idx % _size;
-                for (int i = _size - 1, n = 1; i >= 0; i--, n++)
-                {
-                    SetAndDelete(j, i, n);
-                }
-            }
-
-            else if (idx >= _size * 2 && idx < _size * 3)
-            {
-                var j = _size - 1 - idx % _size;
-                for (int i = _size - 1, n = 1; i >= 0; i--, n++)
-                {
-                    SetAndDelete(i, j, n);
-                }
-            }
-
-            else
-            {
-                var j = _size - 1 - idx % _size;
-                for (int i = 0, n = 1; i < _size; i++, n++)
-                {
-                    SetAndDelete(i, j, n);
-                }
-            }
-
         }
 
         private void DoFor1(int idx)
