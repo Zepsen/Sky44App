@@ -84,16 +84,34 @@ namespace Sky44
 
         private void Display()
         {
+            Console.Write("  ");
+            for (int k = 0; k < _size; k++)
+            {
+                Console.Write($"{_clues[k]}" + new string(' ', _size));
+            }
+
+            Console.WriteLine();
+
             for (int i = 0; i < _size; i++)
             {
+                Console.Write(_clues[_clues.Count - 1 - i]);
+
                 for (int j = 0; j < _size; j++)
                 {
                     Console.Write($" {_arr[i][j]}" + new string(' ', _size - _arr[i][j].Length));
                 }
 
+                Console.Write(_clues[_size + i]);
                 Console.WriteLine();
             }
 
+            Console.Write("  ");
+            for (int k = 0; k < _size; k++)
+            {
+                Console.Write($"{_clues[_size * 3 - 1 - k]}" + new string(' ', _size));
+            }
+
+            Console.WriteLine();            
             Console.WriteLine(new string('-', 50));
         }
 
