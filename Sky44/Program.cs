@@ -96,11 +96,13 @@ namespace Sky44
             {
                 Console.Write(_clues[_clues.Count - 1 - i]);
 
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 for (int j = 0; j < _size; j++)
                 {
                     Console.Write($" {_arr[i][j]}" + new string(' ', _size - _arr[i][j].Length));
                 }
 
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write(_clues[_size + i]);
                 Console.WriteLine();
             }
@@ -153,7 +155,13 @@ namespace Sky44
 
             Display();
 
-            LoopForN(DoFullCheck);
+            do
+            {
+                _set = false;
+                LoopForN(DoFullCheck);
+            }
+            while (_set);
+
             Display();
         }
 
@@ -178,7 +186,41 @@ namespace Sky44
             (int x, int y, Vector vector) = GetCoords(idx);
             var val = _size - (n - 1);
 
+            var left = _clues[idx]; 
+            int right = 0;
+
+            var temp = new string[_size];
             switch (vector)
+            {
+                case Vector.Left:
+                    temp = _arr[x];
+                    right = _clues[_size * 2 - 1 - (idx % _size)];
+                    break;
+                case Vector.Right:
+                    temp = _arr[x].Reverse().ToArray();
+                    right = _clues[_size * 4 - 1 - (idx % _size)];
+                    break;
+                case Vector.Top:
+                    for (int i = 0; i < _size; i++)
+                    {
+                        temp[i] = _arr[i][y];
+                    }
+                    right = _clues[_size * 3 - 1 - idx];
+                    break;
+                case Vector.Bottom:
+                    for (int i = _max; i >= 0; i--)
+                    {
+                        temp[_max - i] = _arr[i][y];
+                    }
+                    right = _clues[_max - idx % 4];
+                    break;
+                default:
+                    break;
+            }
+
+            AnalyzeLine(temp, left, right);
+
+/*            switch (vector)
             {
                 case Vector.Left:
                     if (_arr[x][_max] == _size.ToString())
@@ -222,11 +264,16 @@ namespace Sky44
                     }
                     break;
             }
-
+*/
             Console.WriteLine($"Index {idx}, Vector {vector}");
             Display();
 
 
+        }
+
+        private void AnalyzeLine(string[] temp, int left, int right)
+        {
+            Console.WriteLine($"{left} {right}");   
         }
 
         /* private void DoFullCheck(int idx, int n)
