@@ -218,23 +218,28 @@ namespace Sky44
                         break;
                 }
 
-                AnalyzeLine(temp, left, right);
+                var newtemp = AnalyzeLine(temp, left, right);
 
             }
         }
 
-        private void AnalyzeLine(string[] temp, int left, int right)
+        private string[] AnalyzeLine(string[] temp, int left, int right)
         {
-            if (left == 0 && right == 0) return;
-            if (left == _size || right == _size) return;
+            if (left == 0 && right == 0) return temp;
+            if (left == _size || right == _size) return temp;
 
             Console.WriteLine($"{left} {right}");
 
-/*          if (temp[_max] == _size.ToString())
+            /*if (temp[_max] == _size.ToString())
             {
-                temp[0] = (_size - (left - 1)).ToString();
-            } 
-*/        }
+                if (temp[0].Length > 1)
+                    temp[0] = (_size - (left - 1)).ToString();
+            }
+*/
+
+
+            return temp;
+        }
 
         [Obsolete]
         private void DoFullCheck(int idx, int n)
