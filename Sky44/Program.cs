@@ -195,7 +195,7 @@ namespace Sky44
                 switch (vector)
                 {
                     case Vector.Left:
-                        temp = _arr[x];
+                        temp = _arr[x].ToArray();
                         right = _clues[_size * 2 - 1 - (idx % _size)];
                         break;
                     case Vector.Right:
@@ -225,16 +225,16 @@ namespace Sky44
 
         private void AnalyzeLine(string[] temp, int left, int right)
         {
-            Console.WriteLine($"{left} {right}");
-
             if (left == 0 && right == 0) return;
             if (left == _size || right == _size) return;
 
-            if (temp[_max] == _size.ToString())
+            Console.WriteLine($"{left} {right}");
+
+/*          if (temp[_max] == _size.ToString())
             {
                 temp[0] = (_size - (left - 1)).ToString();
             } 
-        }
+*/        }
 
         [Obsolete]
         private void DoFullCheck(int idx, int n)
