@@ -136,8 +136,37 @@ namespace Sky44
                 var line = GetLine(x, y, vector);
                 var right = GetOppositeIdx(idx);
                 var s = _size.ToString();
-
+                var size = GetSize(line);
                 //....
+                if(n == 3)
+                {
+                    if(line[2] == s)
+                    {
+                        if(line[0].Length == 2 && line[1].Length == 2)
+                        {
+
+                        }
+                    }
+                }
+            }
+
+            private int GetSize(List<string> line)
+            {
+                var size = 0;
+                var max = "0";
+                foreach (var item in line)
+                {
+                    if(item.Length == 1)
+                    {
+                        if(item[0] > max[0])
+                        {
+                            max = item;
+                            size++;
+                        }
+                    }
+                }
+
+                return size;
             }
 
             private List<string> GetLine(int x, int y, Vector v)
