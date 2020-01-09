@@ -99,30 +99,21 @@ namespace Sky44
                 Console.WriteLine("Final");
                 Display();
             }
-         
+
             private void Proceed()
             {
                 Base();
 
-                /*do
+                do
                 {
                     _set = false;
                     DoForLefted();
                 }
                 while (_set);
 
-                Display();*/
-
-                /*do
-                {
-                    _set = false;
-                    LoopForN(DoFullCheck);
-                }
-                while (_set);*/
-
+                LoopForN(DoFullCheck);
             }
 
-            //Do not delete yet
             private void LoopForN(Action<int, int> func)
             {
                 for (int n = 2; n < _size; n++)
@@ -142,41 +133,36 @@ namespace Sky44
             private void DoFullCheck(int idx, int n)
             {
                 (int x, int y, Vector vector) = GetCoords(idx);
-                var val = _size - (n - 1);
+                var line = GetLine(x, y, vector);
+                var right = GetOppositeIdx(idx);
                 var s = _size.ToString();
-                switch (vector)
+
+                //....
+            }
+
+            private List<string> GetLine(int x, int y, Vector v)
+            {
+                var list = new List<string>(4);
+                switch (v)
                 {
                     case Vector.Left:
-                        if (_arr[x][_max] == s)
-                        {
-                            SetAndDelete(x, 0, val);
-                        }
-
-                        break;
+                        return _arr[x].ToList();
                     case Vector.Right:
-                        if (_arr[x][0] == s)
-                        {
-                            SetAndDelete(x, _max, val);
-                        }
-                        break;
+                        return _arr[x].Reverse().ToList();
                     case Vector.Top:
-                        if (_arr[_max][y] == s)
+                        for (int i = 0; i < _size; i++)
                         {
-                            if (n == _size - 1)
-                                SetAndDelete(0, y, val);
+                            list.Add(_arr[i][y]);
                         }
-                        break;
+                        return list;
                     case Vector.Bottom:
-                        if (_arr[0][y] == s)
+                        for (int i = _max; i >= 0; i--)
                         {
-                            SetAndDelete(_max, y, val);
+                            list.Add(_arr[i][y]);
                         }
-                        break;
+                        return list;
+                    default: return list;
                 }
-
-                Console.WriteLine($"Index {idx}, Vector {vector}");
-                Display();
-
             }
 
             // todo: optimize this but it works correct
@@ -510,7 +496,6 @@ namespace Sky44
                     {
                         Console.Write($" {_arr[i][j]}" + new string(' ', _size - _arr[i][j].Length));
                     }
-
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(_clues[_size + i]);
                     Console.WriteLine();
@@ -525,7 +510,6 @@ namespace Sky44
                 Console.WriteLine();
                 Console.WriteLine(new string('-', 50));
             }
-
         }
     }
 }
