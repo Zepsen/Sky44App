@@ -21,34 +21,34 @@ namespace Sky44
             Console.WriteLine("Hello World!");
 
             var resolver = new Resolve();
-            /*            resolver.Run(
-                            new int[] {
+            resolver.Run(
+                new int[] {
                                2, 2, 1, 3,
                                2, 2, 3, 1,
                                1, 2, 2, 3,
                                3, 2, 1, 3
-                            });
+                });
 
-                        resolver = new Resolve();
-                        resolver.Run(new[]
-                        {
+            resolver = new Resolve();
+            resolver.Run(new[]
+            {
                                0, 0, 1, 2,
                                0, 2, 0, 0,
                                0, 3, 0, 0,
                                0, 1, 0, 0
                         });
 
-                        Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.ForegroundColor = ConsoleColor.Yellow;
 
-                        resolver = new Resolve();
-                        resolver.Run(new[]
-                        {
+            resolver = new Resolve();
+            resolver.Run(new[]
+            {
                             3, 2, 2, 3, 2, 1,
                             1, 2, 3, 3, 2, 2,
                             5, 1, 2, 2, 4, 3,
                             3, 2, 1, 2, 2, 4
                         });
-            */
+
             resolver = new Resolve();
             resolver.Run(new[]
             {
@@ -79,6 +79,8 @@ namespace Sky44
 
             Console.WriteLine("Size is " + _size);
             Proceed();
+
+            Console.WriteLine("Final");
             Display();
         }
 
@@ -119,53 +121,27 @@ namespace Sky44
 
         private void Proceed()
         {
-            //for last
-            if (_clues.Any(i => i == _size))
-            {
-                var idx = _clues.IndexOf(_size, 0);
-                while (idx != -1)
-                {
-                    DoForSize(idx);
-                    idx = _clues.IndexOf(_size, idx + 1);
-                }
-            }
-            Display();
+            Base();
 
-            // for first
-            if (_clues.Any(i => i == 1))
-            {
-                var idx = _clues.IndexOf(1, 0);
-                while (idx != -1)
-                {
-                    DoFor1(idx);
-                    idx = _clues.IndexOf(1, idx + 1);
-                }
-            }
-
-            Display();
-            LoopForN(DoForN);
-            Display();
-
-            do
+            /*do
             {
                 _set = false;
                 DoForLefted();
             }
             while (_set);
 
-            Display();
+            Display();*/
 
-            /* do
-             {
-                 _set = false;
-                 LoopForN(DoFullCheck);
-             }
-             while (_set);*/
-            GoFull();
+            /*do
+            {
+                _set = false;
+                LoopForN(DoFullCheck);
+            }
+            while (_set);*/
 
-            Display();
         }
 
+        //Do not delete yet
         private void LoopForN(Action<int, int> func)
         {
             for (int n = 2; n < _size; n++)
@@ -182,112 +158,37 @@ namespace Sky44
             }
         }
 
-        private void GoFull()
-        {
-            for (int idx = 0; idx < _clues.Count - 1; idx++)
-            {
-
-                (int x, int y, Vector vector) = GetCoords(idx);
-                var left = _clues[idx];
-                int right = 0;
-
-                var temp = new string[_size];
-                switch (vector)
-                {
-                    case Vector.Left:
-                        temp = _arr[x].ToArray();
-                        right = _clues[_size * 2 - 1 - (idx % _size)];
-                        break;
-                    case Vector.Right:
-                        temp = _arr[x].Reverse().ToArray();
-                        right = _clues[_size * 4 - 1 - (idx % _size)];
-                        break;
-                    case Vector.Top:
-                        for (int i = 0; i < _size; i++)
-                        {
-                            temp[i] = _arr[i][y];
-                        }
-                        right = _clues[_size * 3 - 1 - idx];
-                        break;
-                    case Vector.Bottom:
-                        for (int i = _max; i >= 0; i--)
-                        {
-                            temp[_max - i] = _arr[i][y];
-                        }
-                        right = _clues[_max - idx % 4];
-                        break;
-                }
-
-                var newtemp = AnalyzeLine(temp, left, right);
-
-            }
-        }
-
-        private string[] AnalyzeLine(string[] temp, int left, int right)
-        {
-            if (left == 0 && right == 0) return temp;
-            if (left == _size || right == _size) return temp;
-
-            Console.WriteLine($"{left} {right}");
-
-            /*if (temp[_max] == _size.ToString())
-            {
-                if (temp[0].Length > 1)
-                    temp[0] = (_size - (left - 1)).ToString();
-            }
-*/
-
-
-            return temp;
-        }
-
-        [Obsolete]
         private void DoFullCheck(int idx, int n)
         {
             (int x, int y, Vector vector) = GetCoords(idx);
             var val = _size - (n - 1);
-
+            var s = _size.ToString();
             switch (vector)
             {
                 case Vector.Left:
-                    if (_arr[x][_max] == _size.ToString())
+                    if (_arr[x][_max] == s)
                     {
                         SetAndDelete(x, 0, val);
-                    } else if (_arr[x][_max - 1] == _size.ToString())
-                    {
-                        DoForSize(idx, 1);
                     }
+
                     break;
                 case Vector.Right:
-                    if (_arr[x][0] == _size.ToString())
+                    if (_arr[x][0] == s)
                     {
                         SetAndDelete(x, _max, val);
-                    } else if (_arr[x][1] == _size.ToString())
-                    {
-                        if (n == _size - 1)
-                            DoForSize(idx, 1);
                     }
                     break;
                 case Vector.Top:
-                    if (_arr[_max][y] == _size.ToString())
+                    if (_arr[_max][y] == s)
                     {
                         if (n == _size - 1)
                             SetAndDelete(0, y, val);
-                    } else if (_arr[_max - 1][y] == _size.ToString())
-                    {
-                        if (n == _size - 1)
-                            DoForSize(idx, 1);
-
                     }
                     break;
                 case Vector.Bottom:
-                    if (_arr[0][y] == _size.ToString())
+                    if (_arr[0][y] == s)
                     {
                         SetAndDelete(_max, y, val);
-                    } else if (_arr[1][y] == _size.ToString())
-                    {
-                        if (n == _size - 1)
-                            DoForSize(idx, 1);
                     }
                     break;
             }
@@ -295,104 +196,9 @@ namespace Sky44
             Console.WriteLine($"Index {idx}, Vector {vector}");
             Display();
 
-
         }
 
-
-        /* private void DoFullCheck(int idx, int n)
-         {
-             (int x, int y, Vector vector) = GetCoords(idx);
-             var must = Enumerable.Range(_size - (n - 2), n - 1);
-             var mustRes = string.Join("", must);
-             //var mustRes = _size.ToString();
-             var availabel = _size - n;
-
-             for (int i = availabel; i < _size; i++)
-             {
-                 switch (vector)
-                 {
-                     case Vector.Left:
-                         foreach (var item in must)
-                         {
-                             if(_arr[x][_max] == _size.ToString())
-                             {
-                                 mustRes = string.Empty;
-                             }
-
-                             if (_arr[x][i] == item.ToString())
-                             {
-                                 mustRes = mustRes.Replace(item.ToString(), "");
-                             }
-                         }
-
-                         break;
-                     case Vector.Right:
-                         foreach (var item in must)
-                         {
-                             if(_arr[x][0] == _size.ToString())
-                             {
-                                 mustRes = string.Empty;
-                             }
-
-                             if (_arr[_max][_max - i] == item.ToString())
-                             {
-                                 mustRes = mustRes.Replace(item.ToString(), "");
-                             }
-                         }
-                         break;
-                     case Vector.Top:
-                         foreach (var item in must)
-                         {
-                             if(_arr[_max][y] == _size.ToString())
-                             {
-                                 mustRes = string.Empty;
-                             }
-
-                             if (_arr[i][y] == item.ToString())
-                             {
-                                 mustRes = mustRes.Replace(item.ToString(), "");
-                             }
-                         }
-                         break;
-                     case Vector.Bottom:
-                         foreach (var item in must)
-                         {
-                             if(_arr[0][y] == _size.ToString())
-                             {
-                                 mustRes = string.Empty;
-                             }
-
-                             if (_arr[_max - i][_max] == item.ToString())
-                             {
-                                 mustRes = mustRes.Replace(item.ToString(), "");
-                             }
-                         }
-                         break;
-                     default:
-                         break;
-                 }
-             }
-
-             if (string.IsNullOrEmpty(mustRes))
-             {
-                 var newval = _arr[x][y].LastOrDefault() - '0';
-                 SetAndDelete(x, y, newval);
-             }
-         }
- */
-        private Vector GetVector(int idx)
-        {
-            if (idx < _size)
-                return Vector.Top;
-            else if (idx >= _size && idx < _size * 2)
-                return Vector.Right;
-            else if (idx >= _size * 2 && idx < _size * 3)
-                return Vector.Bottom;
-            else
-                return Vector.Left;
-        }
-
-        // todo: optimize this but it works correct
+         // todo: optimize this but it works correct
         private void DoForLefted()
         {
             List<char> res = new List<char>(4);
@@ -447,10 +253,25 @@ namespace Sky44
             }
         }
 
-        private void SetAndDelete(int i, int j, int item)
+        #region Base 
+        private void Base()
         {
-            Set(i, j, item);
-            DeleteInLineAndRow(i, j, item);
+            for (int i = 0; i < _clues.Count; i++)
+            {
+                if (_clues[i] == 0) continue;
+
+                if (_clues[i] == 1)
+                    DoFor1(i);
+
+                else if (_clues[i] == _size)
+                    DoForSize(i);
+
+                else
+                {
+                    DoForOpposite(i);
+                    DoForN(i, _clues[i]);
+                }
+            }
         }
 
         private void DoForN(int idx, int n)
@@ -465,25 +286,6 @@ namespace Sky44
 
                 n--;
                 ModifyCoords(ref x, ref y, vector);
-            }
-        }
-
-        private void ModifyCoords(ref int x, ref int y, Vector vector)
-        {
-            switch (vector)
-            {
-                case Vector.Left:
-                    y++;
-                    break;
-                case Vector.Right:
-                    y--;
-                    break;
-                case Vector.Top:
-                    x++;
-                    break;
-                case Vector.Bottom:
-                    x--;
-                    break;
             }
         }
 
@@ -529,6 +331,40 @@ namespace Sky44
             SetAndDelete(x, y, _size);
         }
 
+        private void DoForOpposite(int idx)
+        {
+            var right = GetOppositeIdx(idx);
+            (int x, int y, Vector v) = GetCoords(idx);
+
+            /// For 7 - 62 | 53 | 44 
+            ///     6 - 43 | 52 
+            ///     4 - 32 
+            if (_clues[idx] + right == _size + 1)
+            {
+                switch (v)
+                {
+                    case Vector.Left:
+                        SetAndDelete(x, _clues[idx] - 1, _size);
+                        break;
+                    case Vector.Right:
+                        SetAndDelete(x, right - 1, _size);
+                        break;
+                    case Vector.Top:
+                        SetAndDelete(_clues[idx] - 1, y, _size);
+                        break;
+                    case Vector.Bottom:
+                        SetAndDelete(right - 1, y, _size);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        #endregion Base
+
+        #region Helpers
+
         private void DeleteInLineAndRow(int x, int y, int n)
         {
             for (int i = 0; i < _size; i++)
@@ -552,6 +388,12 @@ namespace Sky44
             }
         }
 
+        private void SetAndDelete(int i, int j, int item)
+        {
+            Set(i, j, item);
+            DeleteInLineAndRow(i, j, item);
+        }
+
         private void Set(int x, int y, int n)
         {
             if (_arr[x][y].Length > 1)
@@ -560,6 +402,19 @@ namespace Sky44
                 _set = true;
             }
         }
+
+        private Vector GetVector(int idx)
+        {
+            if (idx < _size)
+                return Vector.Top;
+            else if (idx >= _size && idx < _size * 2)
+                return Vector.Right;
+            else if (idx >= _size * 2 && idx < _size * 3)
+                return Vector.Bottom;
+            else
+                return Vector.Left;
+        }
+
 
         (int x, int y, Vector vector) GetCoords(int idx)
         {
@@ -588,6 +443,44 @@ namespace Sky44
 
             return (x, y, vector);
         }
+
+        private int GetOppositeIdx(int idx)
+        {
+            var vector = GetVector(idx);
+            switch (vector)
+            {
+                case Vector.Left:
+                    return _clues[_size * 2 - 1 - (idx % _size)];
+                case Vector.Right:
+                    return _clues[_size * 4 - 1 - (idx % _size)];
+                case Vector.Top:
+                    return _clues[_size * 3 - 1 - idx];
+                case Vector.Bottom:
+                    return _clues[_max - idx % 4];
+                default: return 0;
+            }
+        }
+
+        private void ModifyCoords(ref int x, ref int y, Vector vector)
+        {
+            switch (vector)
+            {
+                case Vector.Left:
+                    y++;
+                    break;
+                case Vector.Right:
+                    y--;
+                    break;
+                case Vector.Top:
+                    x++;
+                    break;
+                case Vector.Bottom:
+                    x--;
+                    break;
+            }
+        }
+
+        #endregion Helpers
 
         string[][] Generate()
         {
