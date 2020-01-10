@@ -103,15 +103,24 @@ namespace Sky44
             private void Proceed()
             {
                 Base();
+                LoopLefted();
+                               
+                do
+                {
+                    _set = false;
+                    LoopForN(DoFullCheck);
+                } while (_set);
 
+            }
+
+            private void LoopLefted()
+            {
                 do
                 {
                     _set = false;
                     DoForLefted();
                 }
                 while (_set);
-
-                LoopForN(DoFullCheck);
             }
 
             private void LoopForN(Action<int, int> func)
@@ -136,19 +145,70 @@ namespace Sky44
                 var line = GetLine(x, y, vector);
                 var right = GetOppositeIdx(idx);
                 var s = _size.ToString();
-                var size = GetSize(line);
-                //....
-                if(n == 3)
-                {
-                    if(line[2] == s)
-                    {
-                        if(line[0].Length == 2 && line[1].Length == 2)
-                        {
 
+                //var size = GetSize(line);
+
+                #region  Optimize 
+
+                if (n == 2)
+                {
+                    #region 2 when already set max value
+                    //If set size, we can delete some nums from first position, if it's not set on the 2nd 
+                    var sindx = line.IndexOf(s);
+                    if(sindx > 1)
+                    {
+                        var max = line.Skip(1).Take(sindx - 1).Where(i => i.Length == 1);
+                        if (max.Any())
+                        {
+                            var val = max.Select(s => s[0] - '0').Max();
+                            while (val > 0)
+                            {
+                                Remove(x, y, val);
+                                val--;
+                            }
+                        } else
+                        {
+                            Remove(x, y, 1);
+                        }
+
+                        LoopLefted();
+                    }
+
+
+                    if (sindx == n)
+                    {
+                        var last = line[0].Last();
+                        if (line[1].Last() == last)
+                        {
+                            (int x1, int y1) = ModifyCoords(x, y, vector);
+                            Remove(x1, y1, last - '0');
+                            LoopLefted();
                         }
                     }
+
+                    #endregion
                 }
+
+                else if(n == 3)
+                {
+                    var sindx = line.IndexOf(s);
+                    if (sindx == n - 1)
+                    {
+                        var last = line[0].Last();
+                        if(line[1].Last() == last)
+                        {
+                            if(!line.Skip(2).Any(i => i.Contains(last)))
+                            {
+                                Remove(x, y, last - '0');
+                                LoopLefted();
+                            }
+                        }
+                    }               
+                }
+
+                #endregion optimize
             }
+
 
             private int GetSize(List<string> line)
             {
@@ -281,7 +341,7 @@ namespace Sky44
                     }
 
                     n--;
-                    ModifyCoords(ref x, ref y, vector);
+                    (x, y) = ModifyCoords(x, y, vector);
                 }
             }
 
@@ -456,7 +516,7 @@ namespace Sky44
                 }
             }
 
-            private void ModifyCoords(ref int x, ref int y, Vector vector)
+       /*     private void ModifyCoords(ref int x, ref int y, Vector vector)
             {
                 switch (vector)
                 {
@@ -473,6 +533,40 @@ namespace Sky44
                         x--;
                         break;
                 }
+            }*/
+
+            private (int x, int y) ModifyCoords(int x, int y, Vector vector)
+            {
+                switch (vector)
+                {
+                    case Vector.Left:
+                        y++;
+                        break;
+                    case Vector.Right:
+                        y--;
+                        break;
+                    case Vector.Top:
+                        x++;
+                        break;
+                    case Vector.Bottom:
+                        x--;
+                        break;
+                }
+
+                return (x, y);
+            }
+
+            private bool IsFinish()
+            {
+                for (int i = 0; i < _size; i++)
+                {
+                    for (int j = 0; j < _size; j++)
+                    {
+                        if (_arr[i][j].Length > 1) return false;
+                    }
+                }
+
+                return true;
             }
 
             #endregion Helpers
