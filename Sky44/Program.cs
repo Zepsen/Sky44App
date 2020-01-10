@@ -146,7 +146,8 @@ namespace Sky44
                 var right = GetOppositeIdx(idx);
                 var s = _size.ToString();
 
-                //var size = GetSize(line);
+                
+                //var size = GetLineInfo(line);
 
                 #region  Optimize 
 
@@ -210,10 +211,11 @@ namespace Sky44
             }
 
 
-            private int GetSize(List<string> line)
+            private (int, string) GetLineInfo(List<string> line)
             {
                 var size = 0;
-                var max = "0";
+                var max = line[0].Last().ToString();
+
                 foreach (var item in line)
                 {
                     if(item.Length == 1)
@@ -226,7 +228,7 @@ namespace Sky44
                     }
                 }
 
-                return size;
+                return (size, max);
             }
 
             private List<string> GetLine(int x, int y, Vector v)
