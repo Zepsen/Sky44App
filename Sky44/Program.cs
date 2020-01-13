@@ -146,13 +146,12 @@ namespace Sky44
                 var right = GetOppositeIdx(idx);
                 var s = _size.ToString();
 
-
                 //var size = GetLineInfo(line);
 
                 #region  Optimize 
                 if (n > 2)
                 {
-                    if (n - 1 == _size)
+                    if (line[n - 1] == s)
                     {
                         for (int i = n - 2; i >= 0; i--)
                         {
@@ -168,10 +167,9 @@ namespace Sky44
                                 (x1, y1) = ModifyCoords(x1, y1, vector);
                             }
                         }
-
                     }
                 }
-
+//else??
                 if (n == 2)
                 {
                     #region 2 when already set max value
@@ -209,7 +207,9 @@ namespace Sky44
                     }
 
                     #endregion
-                } else if (n == 3)
+                } 
+                
+               /* else if (n == 3)
                 {
                     var sindx = line.IndexOf(s);
                     if (sindx == n - 1)
@@ -224,7 +224,7 @@ namespace Sky44
                             }
                         }
                     }
-                }
+                }*/
 
                 #endregion optimize
             }
