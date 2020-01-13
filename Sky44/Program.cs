@@ -104,7 +104,7 @@ namespace Sky44
             {
                 Base();
                 LoopLefted();
-                               
+
                 do
                 {
                     _set = false;
@@ -146,17 +146,38 @@ namespace Sky44
                 var right = GetOppositeIdx(idx);
                 var s = _size.ToString();
 
-                
+
                 //var size = GetLineInfo(line);
 
                 #region  Optimize 
+                if (n > 2)
+                {
+                    if (n - 1 == _size)
+                    {
+                        for (int i = n - 2; i >= 0; i--)
+                        {
+                            var x1 = x;
+                            var y1 = y;
+                            var max = line[i].Last() - '0';
+                            //get max from last
+                            //delete in all before max
+                            //next
+                            for (int j = 0; j < i; j++)
+                            {
+                                Remove(x1, y1, max);
+                                (x1, y1) = ModifyCoords(x1, y1, vector);
+                            }
+                        }
+
+                    }
+                }
 
                 if (n == 2)
                 {
                     #region 2 when already set max value
                     //If set size, we can delete some nums from first position, if it's not set on the 2nd 
                     var sindx = line.IndexOf(s);
-                    if(sindx > 1)
+                    if (sindx > 1)
                     {
                         var max = line.Skip(1).Take(sindx - 1).Where(i => i.Length == 1);
                         if (max.Any())
@@ -188,23 +209,21 @@ namespace Sky44
                     }
 
                     #endregion
-                }
-
-                else if(n == 3)
+                } else if (n == 3)
                 {
                     var sindx = line.IndexOf(s);
                     if (sindx == n - 1)
                     {
                         var last = line[0].Last();
-                        if(line[1].Last() == last)
+                        if (line[1].Last() == last)
                         {
-                            if(!line.Skip(2).Any(i => i.Contains(last)))
+                            if (!line.Skip(2).Any(i => i.Contains(last)))
                             {
                                 Remove(x, y, last - '0');
                                 LoopLefted();
                             }
                         }
-                    }               
+                    }
                 }
 
                 #endregion optimize
@@ -218,9 +237,9 @@ namespace Sky44
 
                 foreach (var item in line)
                 {
-                    if(item.Length == 1)
+                    if (item.Length == 1)
                     {
-                        if(item[0] > max[0])
+                        if (item[0] > max[0])
                         {
                             max = item;
                             size++;
@@ -518,24 +537,24 @@ namespace Sky44
                 }
             }
 
-       /*     private void ModifyCoords(ref int x, ref int y, Vector vector)
-            {
-                switch (vector)
-                {
-                    case Vector.Left:
-                        y++;
-                        break;
-                    case Vector.Right:
-                        y--;
-                        break;
-                    case Vector.Top:
-                        x++;
-                        break;
-                    case Vector.Bottom:
-                        x--;
-                        break;
-                }
-            }*/
+            /*     private void ModifyCoords(ref int x, ref int y, Vector vector)
+                 {
+                     switch (vector)
+                     {
+                         case Vector.Left:
+                             y++;
+                             break;
+                         case Vector.Right:
+                             y--;
+                             break;
+                         case Vector.Top:
+                             x++;
+                             break;
+                         case Vector.Bottom:
+                             x--;
+                             break;
+                     }
+                 }*/
 
             private (int x, int y) ModifyCoords(int x, int y, Vector vector)
             {
