@@ -151,6 +151,7 @@ namespace Sky44
                 #region  Optimize 
                 if (n > 2)
                 {
+                    //If n - 1 == s than we can use 0.max < 1.max ... < (n - 1).max 
                     if (line[n - 1] == s)
                     {
                         for (int i = n - 2; i >= 0; i--)
@@ -158,25 +159,34 @@ namespace Sky44
                             var x1 = x;
                             var y1 = y;
                             var max = line[i].Last() - '0';
-                            //get max from last
-                            //delete in all before max
-                            //next
                             for (int j = 0; j < i; j++)
                             {
                                 Remove(x1, y1, max);
                                 (x1, y1) = ModifyCoords(x1, y1, vector);
                             }
                         }
+
+                        LoopLefted();
                     }
                 }
-//else??
+
+                #region 2 when already set max value
                 if (n == 2)
                 {
-                    #region 2 when already set max value
-                    //If set size, we can delete some nums from first position, if it's not set on the 2nd 
                     var sindx = line.IndexOf(s);
+                    // if set in the last position, 0 - always will be _size - 1;
+                    if (sindx == _max)
+                    {
+                        SetAndDelete(x, y, _max);
+                        LoopLefted();
+
+                        line = GetLine(x, y, vector); //?
+                    }
+
                     if (sindx > 1)
                     {
+                        
+                        //If set size, we can delete some nums from first position, if it's not set on the 2nd 
                         var max = line.Skip(1).Take(sindx - 1).Where(i => i.Length == 1);
                         if (max.Any())
                         {
@@ -192,8 +202,8 @@ namespace Sky44
                         }
 
                         LoopLefted();
+                        line = GetLine(x, y, vector);
                     }
-
 
                     if (sindx == n)
                     {
@@ -206,25 +216,58 @@ namespace Sky44
                         }
                     }
 
-                    #endregion
-                } 
-                
-               /* else if (n == 3)
-                {
-                    var sindx = line.IndexOf(s);
-                    if (sindx == n - 1)
-                    {
-                        var last = line[0].Last();
-                        if (line[1].Last() == last)
+                    //if set first and max, we can delete all greater than first in range between fst and max
+                    if (line[0].Count() == 1)
                         {
-                            if (!line.Skip(2).Any(i => i.Contains(last)))
+                            var x1 = x;
+                            var y1 = y;
+                            var val = line[0].First() - '0';
+                            for (int i = sindx - 1; i > 0; i--)
                             {
-                                Remove(x, y, last - '0');
-                                LoopLefted();
+                                (x1, y1) = ModifyCoords(x1, y1, vector);
+                                for (int j = val + 1; j < _size; j++)
+                                {
+                                    Remove(x1, y1, j);
+                                }
                             }
                         }
+
+
+                }
+                #endregion
+
+                //if set first value == max on position (n-1) 
+                if(line[0].Count() == 1)
+                {
+                    var sindx = line.IndexOf(s);
+                    if(sindx > 1 && line[n - 1] == s)
+                    {
+                        var from = line[0].First() - '0';
+                        var (x1, y1) = ModifyCoords(x, y, vector);
+                        for (int i = from + 1; i < _size; i++)
+                        {
+                            SetAndDelete(x1, y1, i);
+                            (x1, y1) = ModifyCoords(x1, y1, vector);
+                        }
                     }
-                }*/
+                }
+
+                /* else if (n == 3)
+                 {
+                     var sindx = line.IndexOf(s);
+                     if (sindx == n - 1)
+                     {
+                         var last = line[0].Last();
+                         if (line[1].Last() == last)
+                         {
+                             if (!line.Skip(2).Any(i => i.Contains(last)))
+                             {
+                                 Remove(x, y, last - '0');
+                                 LoopLefted();
+                             }
+                         }
+                     }
+                 }*/
 
                 #endregion optimize
             }
