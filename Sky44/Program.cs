@@ -38,8 +38,6 @@ namespace Sky44
                                0, 1, 0, 0
                         });
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-
             resolver = new Resolve();
             resolver.Run(new[]
             {
@@ -100,7 +98,7 @@ namespace Sky44
                 Display();
             }
 
-            private void Proceed()
+            private int[][] Proceed()
             {
                 Base();
                 LoopLefted();
@@ -109,8 +107,10 @@ namespace Sky44
                 {
                     _set = false;
                     LoopForN(DoFullCheck);
+                    LoopLefted();
                 } while (_set);
 
+                return ConvertResult();
             }
 
             private void LoopLefted()
@@ -165,8 +165,6 @@ namespace Sky44
                                 (x1, y1) = ModifyCoords(x1, y1, vector);
                             }
                         }
-
-                        LoopLefted();
                     }
                 }
 
@@ -178,8 +176,6 @@ namespace Sky44
                     if (sindx == _max)
                     {
                         SetAndDelete(x, y, _max);
-                        LoopLefted();
-
                         line = GetLine(x, y, vector); //?
                     }
 
@@ -201,7 +197,6 @@ namespace Sky44
                             Remove(x, y, 1);
                         }
 
-                        LoopLefted();
                         line = GetLine(x, y, vector);
                     }
 
@@ -257,7 +252,7 @@ namespace Sky44
               
                 #endregion optimize
             }
-
+/*
 
             private (int, string) GetLineInfo(List<string> line)
             {
@@ -278,7 +273,7 @@ namespace Sky44
 
                 return (size, max);
             }
-
+*/
             private List<string> GetLine(int x, int y, Vector v)
             {
                 var list = new List<string>(4);
@@ -489,7 +484,7 @@ namespace Sky44
                     if (_arr[x][y].Length == 1)
                     {
                         DeleteInLineAndRow(x, y, Convert.ToInt32(_arr[x][y]));
-                        //_set = true;
+                        _set = true;
                     }
                 }
             }
@@ -565,26 +560,7 @@ namespace Sky44
                     default: return 0;
                 }
             }
-
-            /*     private void ModifyCoords(ref int x, ref int y, Vector vector)
-                 {
-                     switch (vector)
-                     {
-                         case Vector.Left:
-                             y++;
-                             break;
-                         case Vector.Right:
-                             y--;
-                             break;
-                         case Vector.Top:
-                             x++;
-                             break;
-                         case Vector.Bottom:
-                             x--;
-                             break;
-                     }
-                 }*/
-
+           
             private (int x, int y) ModifyCoords(int x, int y, Vector vector)
             {
                 switch (vector)
@@ -606,17 +582,18 @@ namespace Sky44
                 return (x, y);
             }
 
-            private bool IsFinish()
+            private int[][] ConvertResult()
             {
+                int[][] res = new int[_size][];
                 for (int i = 0; i < _size; i++)
                 {
                     for (int j = 0; j < _size; j++)
                     {
-                        if (_arr[i][j].Length > 1) return false;
+                        res[i][j] = _arr[i][j][0] - '0';
                     }
                 }
 
-                return true;
+                return res;
             }
 
             #endregion Helpers
