@@ -243,32 +243,18 @@ namespace Sky44
                     if(sindx > 1 && line[n - 1] == s)
                     {
                         var from = line[0].First() - '0';
-                        var (x1, y1) = ModifyCoords(x, y, vector);
-                        for (int i = from + 1; i < _size; i++)
+                        if (from == _size - n + 1)
                         {
-                            SetAndDelete(x1, y1, i);
-                            (x1, y1) = ModifyCoords(x1, y1, vector);
+                            var (x1, y1) = ModifyCoords(x, y, vector);
+                            for (int i = from + 1; i < _size; i++)
+                            {
+                                SetAndDelete(x1, y1, i);
+                                (x1, y1) = ModifyCoords(x1, y1, vector);
+                            }
                         }
                     }
                 }
-
-                /* else if (n == 3)
-                 {
-                     var sindx = line.IndexOf(s);
-                     if (sindx == n - 1)
-                     {
-                         var last = line[0].Last();
-                         if (line[1].Last() == last)
-                         {
-                             if (!line.Skip(2).Any(i => i.Contains(last)))
-                             {
-                                 Remove(x, y, last - '0');
-                                 LoopLefted();
-                             }
-                         }
-                     }
-                 }*/
-
+              
                 #endregion optimize
             }
 
